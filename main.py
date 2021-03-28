@@ -1,5 +1,9 @@
 # Пилить разные доп проверки на формат вводимых данных и вывод соответствующих ошибок с предложением повторного воода-
 # мне было лень
+import json
+from functools import reduce
+from itertools import count, cycle
+
 
 def choose_lesson():
     nom_task = None
@@ -11,6 +15,10 @@ def choose_lesson():
             lesson2()
         elif nom_task == '3':
             lesson3()
+        elif nom_task == '4':
+            lesson4()
+        elif nom_task == '5':
+            lesson5()
 
 
 def lesson1():
@@ -226,4 +234,161 @@ def lesson3():
             print(multi_title(input('Введите слова: ')))
 
 
-choose_lesson()
+def lesson4():
+    nom_task = None
+    while nom_task != 'l':
+        nom_task = input('Введите номер задания, для перехода к выбору занятия, введите l: ')
+        if nom_task == '1':
+            print('см. l4_t1_param.py')
+        elif nom_task == '2':
+            lst = [300, 2, 12, 44, 1, 1, 4, 10, 7, 1, 78, 123, 55]
+            print([j for i, j in zip(lst, lst[1:]) if j > i])
+        elif nom_task == '3':
+            print([el for el in range(20, 240) if (el % 20 == 0 or el % 21 == 0)])
+        elif nom_task == '4':
+            lst = [2, 2, 2, 7, 23, 1, 44, 44, 3, 2, 10, 7, 4, 11]
+            print([el for el in lst if lst.count(el) < 2])
+        elif nom_task == '5':
+            def sum_all(a, b):
+                return a + b
+
+            print(reduce(sum_all, [el for el in range(100, 1000) if el % 2 == 0]))
+        elif nom_task == '6':
+            ver_iter = input('1. Генератор целых чисел\n2. Повторитель\nВведите номер желаемого итератора: ')
+            if ver_iter == '1':
+                start_iter = int(input('Введите стартовое число: '))
+                end_iter = int(input('Введите конечное число: '))
+                print([el for el in range(start_iter, end_iter + 1)])
+                for el in count(start_iter, 1):
+                    if el > end_iter:
+                        break
+                    else:
+                        print(el)
+            elif ver_iter == '2':
+                lst = input('Введите список повторяемых элементов через пробел: ').split()
+                i = int(input('Введите количество повторений: '))
+                it = 1
+                for el in cycle(lst):
+                    if it > i * len(lst):
+                        break
+                    print(el)
+                    it += 1
+        elif nom_task == '7':
+            last_nom = int(input('Введите последнее число для факториала: '))
+
+            def generator():
+                for el in range(1, last_nom + 1):
+                    yield el
+
+            nom = 1
+            for el in generator():
+                nom *= el
+                print(f'{el}! = {nom}')
+
+
+def lesson5():
+    nom_task = None
+    while nom_task != 'l':
+        nom_task = input('Введите номер задания, для перехода к выбору занятия, введите l: ')
+        if nom_task == '1':
+            with open('1t.txt', 'w', encoding='utf-8') as wf:
+                lst = list()
+                while True:
+                    w_str = input('Введите записываемые данные: ')
+                    if w_str != '':
+                        if len(lst) > 0:
+                            lst.append('\n' + w_str)
+                        else:
+                            lst.append(w_str)
+                    else:
+                        break
+                wf.writelines(lst)
+        elif nom_task == '2':
+            with open('2t.txt', 'r', encoding='utf-8') as rf:
+                print(f'Исходный текст:\n{rf.read()}')
+                rf.seek(0)
+                lns = rf.readlines()
+                print(f'Всего строк: {len(lns)}')
+                i = 1
+                for el in lns:
+                    print(f'В строке {i} слов {len(el.split())} ')
+                    i += 1
+        elif nom_task == '3':
+            with open('3t.txt', 'r', encoding='utf-8') as rf:
+                print(f'Исходный текст:\n{rf.read()}')
+                rf.seek(0)
+                lns = rf.readlines()
+                i = 0
+                salary = 0
+                for el in lns:
+                    split_str = el.split()
+                    split_salary = float(split_str[1])
+                    salary += float(split_salary)
+                    if split_salary < 20000:
+                        print(f'Работник с зп < 20к: {" ".join(split_str)}')
+                    i += 1
+                print(f'Средняя зп: {salary / i}')
+        elif nom_task == '4':
+            with open('4t.txt', 'r', encoding='utf-8') as rf:
+                print(f'Исходный текст:\n{rf.read()}')
+                rf.seek(0)
+                nom_dict = {'One': 'Адын', 'Two': 'Дыва', 'Three': 'Тыри', 'Four': 'Четыре'}
+                with open('4_1t.txt', 'w+', encoding='utf-8') as wf:
+                    lns_f = rf.readlines()
+                    lst = list()
+                    for el in lns_f:
+                        split_str = el.split(' — ')
+                        lst.append(' — '.join([nom_dict.get(split_str[0]), split_str[1]]))
+                    wf.writelines(lst)
+                    wf.seek(0)
+                    print(f'Получившийся текст:\n{wf.read()}')
+        elif nom_task == '5':
+            with open('5t.txt', 'w', encoding='utf-8') as wf:
+                noms = '4 654 6 65 51 58 32 89 5 984 54'
+                wf.write(noms)
+                print(sum([int(el) for el in noms.split()]))
+        elif nom_task == '6':
+            with open('6t.txt', 'r', encoding='utf-8') as rf:
+                print(f'Исходный текст:\n{rf.read()}')
+                rf.seek(0)
+                lns_f = rf.readlines()
+                less_dic = dict()
+                for ln in lns_f:
+                    split_str = ln.split()
+                    name_less = str(split_str[0])[:len(split_str[0]) - 1]
+                    less = 0
+                    i = 1
+                    while i < len(split_str):
+                        nom_s = split_str[i].find('(')
+                        if nom_s != -1:
+                            less += int(split_str[i][:nom_s])
+                        i += 1
+                    less_dic.update({name_less: less})
+                print(less_dic)
+        elif nom_task == '7':
+            with open('7t.txt', 'r', encoding='utf-8') as rf:
+                print(f'Исходный текст:\n{rf.read()}')
+                rf.seek(0)
+                lns_f = rf.readlines()
+                lst = list()
+                dct = dict()
+                for ln in lns_f:
+                    split_str = ln.split()
+                    dct[split_str[0]] = (int(split_str[2]) - int(split_str[3]))
+                lst.append(dct)
+                average_profit = 0
+                i = 0
+                for el in dct.values():
+                    if el >= 0:
+                        average_profit += el
+                        i += 1
+                if i > 0:
+                    lst.append({'average_profit': average_profit / i})
+                with open("7t.json", "w+") as write_f:
+                    json.dump(lst, write_f)
+                    write_f.seek(0)
+                    print(f'Итоговый текст:\n{write_f.read()}')
+
+
+if __name__ == '__main__':
+    choose_lesson()
