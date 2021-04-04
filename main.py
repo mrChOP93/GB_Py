@@ -3,6 +3,135 @@
 import json
 from functools import reduce
 from itertools import count, cycle
+from datetime import datetime
+from time import sleep
+
+
+class TrafficLight:
+    __color_dict = {'Green': 5, 'Red': 7, 'Yellow': 2}
+
+    def __init__(self, cl):
+        self.__TrafficLight_color = cl
+
+    def running(self):
+        stop = None
+        while stop != 'y':
+            self.switch_color(self.__TrafficLight_color if stop is None else self.change_color())
+            i = 1
+            while i < 3:
+                self.switch_color(self.change_color())
+                i += 1
+            stop = input('Остановить светофор y/n? ')
+
+    def change_color(self):
+        if self.__TrafficLight_color == 'Green':
+            return 'Red'
+        elif self.__TrafficLight_color == 'Red':
+            return 'Yellow'
+        elif self.__TrafficLight_color == 'Yellow':
+            return 'Green'
+
+    def switch_color(self, tc):
+        self.__TrafficLight_color = tc
+        print(f'Тек цвет: {self.__TrafficLight_color}, Тек время: {datetime.now().strftime("%d-%m-%Y %H:%M:%S")}')
+        sl = self.__color_dict.get(self.__TrafficLight_color)
+        print(f'Время задержки: {sl} сек.')
+        sleep(sl)
+        print(f'Тек время окончания: {datetime.now().strftime("%d-%m-%Y %H:%M:%S")}')
+
+
+class Road:
+    def __init__(self, ln, wd):
+        self._road_length = int(ln)
+        self._road_width = int(wd)
+
+    def mass_asphalt(self, thickness):
+        print(
+            f'{self._road_width}м*{self._road_length}м*{thickness}см = {self._road_width * self._road_length * thickness}т')
+
+
+class Worker:
+    def __init__(self, nm, sn, ps, inc):
+        self.worker_name = nm
+        self.worker_surname = sn
+        self.worker_position = ps
+        self.__worker_income = inc
+
+
+class Position(Worker):
+    def __init__(self, nm, sn, ps, inc):
+        super().__init__(nm, sn, ps, inc)
+        self.worker_income = inc
+
+    def get_full_name(self):
+        print(f'Полное имя: {self.worker_surname} {self.worker_name}')
+
+    def get_total_income(self):
+        print(f'У позиции {self.worker_position} полный доход: {sum(self.worker_income.values())}')
+
+
+class Car:
+    car_speed = 0
+
+    def __init__(self, cl, nm, pl):
+        self.car_color = cl
+        self.car_name = nm
+        self.car_is_police = pl
+
+    def go(self, sp):
+        self.car_speed = sp
+        print(f'Машиа поехала со скоростью: {self.car_speed}')
+
+    def stop(self):
+        print(f'Машина остановлена')
+        self.car_speed = 0
+
+    def turn(self, direction):
+        print(f'Поворот {direction}')
+
+    def show_speed(self):
+        print(f'Текущая скорость: {self.car_speed}')
+
+
+class TownCar(Car):
+    def show_speed(self):
+        print(f'Текущая скорость: {self.car_speed}{" скорость превышина!" if self.car_speed > 60 else ""}')
+
+
+class SportCar(Car):
+    pass
+
+
+class WorkCar(Car):
+    def show_speed(self):
+        print(f'Текущая скорость: {self.car_speed}{" скорость превышина!" if self.car_speed > 40 else ""}')
+
+
+class PoliceCar(Car):
+    pass
+
+
+class Stationery:
+    def __init__(self, tl):
+        self.stationery_title = tl
+
+    def draw(self):
+        print('Запуск отрисовки')
+
+
+class Pen(Stationery):
+    def draw(self):
+        print('Запуск письма')
+
+
+class Pencil(Stationery):
+    def draw(self):
+        print('Запуск зарисовки')
+
+
+class Handle(Stationery):
+    def draw(self):
+        print('Запуск выделения')
 
 
 def choose_lesson():
@@ -19,6 +148,8 @@ def choose_lesson():
             lesson4()
         elif nom_task == '5':
             lesson5()
+        elif nom_task == '6':
+            lesson6()
 
 
 def lesson1():
@@ -388,6 +519,75 @@ def lesson5():
                     json.dump(lst, write_f)
                     write_f.seek(0)
                     print(f'Итоговый текст:\n{write_f.read()}')
+
+
+def lesson6():
+    nom_task = None
+    while nom_task != 'l':
+        nom_task = input('Введите номер задания, для перехода к выбору занятия, введите l: ')
+        if nom_task == '1':
+            tl = TrafficLight(input('Введите первоначальный цвет светофора (Green/Red/Yellow): ').title())
+            tl.running()
+        elif nom_task == '2':
+            mass = Road(input('Введите длину: '), input('Введите ширину: '))
+            mass.mass_asphalt(int(input('Введите желаемую толщину асфальта: ')))
+        elif nom_task == '3':
+            pos = Position(input('Введите имя: '), input('Введите фамилию:'), input('Введите название позиции'),
+                           {'wage': int(input('Введите зп: ')), 'bonus': int(input('Введите премию: '))})
+            pos.get_full_name()
+            pos.get_total_income()
+        elif nom_task == '4':
+            tc = TownCar('Красная', 'Разваолюха', False)
+            wc = WorkCar('Синяя', 'Гнилая', False)
+            pc = PoliceCar('Розовая', 'Побитая', True)
+            sc = SportCar('Белая', 'Униженная', False)
+
+            tc.go(int(input('Введите скорость: ')))
+            tc.show_speed()
+            tc.turn(input('Куда повернуть? '))
+            tc.stop()
+            tc.show_speed()
+            print(tc.car_name)
+            print(tc.car_color)
+            print(tc.car_is_police)
+
+            wc.go(int(input('Введите скорость: ')))
+            wc.show_speed()
+            wc.turn(input('Куда повернуть? '))
+            wc.stop()
+            wc.show_speed()
+            print(wc.car_name)
+            print(wc.car_color)
+            print(wc.car_is_police)
+
+            pc.go(int(input('Введите скорость: ')))
+            pc.show_speed()
+            pc.turn(input('Куда повернуть? '))
+            pc.stop()
+            pc.show_speed()
+            print(pc.car_name)
+            print(pc.car_color)
+            print(pc.car_is_police)
+
+            sc.go(int(input('Введите скорость: ')))
+            sc.show_speed()
+            sc.turn(input('Куда повернуть? '))
+            sc.stop()
+            sc.show_speed()
+            print(sc.car_name)
+            print(sc.car_color)
+            print(sc.car_is_police)
+        elif nom_task == '5':
+            sel = Stationery('1')
+            pel = Pen('2')
+            pnel = Pencil('3')
+            hel = Handle('4')
+
+            sel.draw()
+            pel.draw()
+            pnel.draw()
+            hel.draw()
+
 
 
 if __name__ == '__main__':
